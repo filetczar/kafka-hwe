@@ -10,10 +10,11 @@ import java.util.{Properties, UUID}
 
 object JSONConsumer {
 
-  val BootstrapServer = "35.239.241.212:9092,35.239.230.132:9092,34.69.66.216:9092"
-  val Topic: String = "change-me"
+  val BootstrapServer = "cdh01.hourswith.expert:9092,cdh02.hourswith.expert:9092,cdh03.hourswith.expert:9092"
+  val Topic: String = "question-5"
   implicit val formats: DefaultFormats.type = DefaultFormats
 
+  case class Message(name: String, username: String, email: String)
   def main(args: Array[String]): Unit = {
     // Create the KafkaConsumer
     val properties = getProperties(BootstrapServer)
@@ -43,7 +44,11 @@ object JSONConsumer {
          */
 
         val message = record.value()
+        val parsedMessage = parse(message)
+        val m = parsedMessage.extract[Message]
+
         println(s"Message Received: $message")
+        println(s"Case Class: $m")
       })
     }
   }
